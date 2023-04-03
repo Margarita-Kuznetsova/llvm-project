@@ -65,6 +65,7 @@ StringRef Triple::getArchTypeName(ArchType Kind) {
   case sparc:          return "sparc";
   case sparcel:        return "sparcel";
   case sparcv9:        return "sparcv9";
+  case love:           return "love";
   case spir64:         return "spir64";
   case spir:           return "spir";
   case spirv32:        return "spirv32";
@@ -126,6 +127,8 @@ StringRef Triple::getArchTypePrefix(ArchType Kind) {
   case sparcv9:
   case sparcel:
   case sparc:       return "sparc";
+
+  case love:        return "love";
 
   case systemz:     return "s390";
 
@@ -257,7 +260,7 @@ StringRef Triple::getEnvironmentTypeName(EnvironmentType Kind) {
   case MuslEABI: return "musleabi";
   case MuslEABIHF: return "musleabihf";
   case MuslX32: return "muslx32";
-  case Simulator: return "simulator";
+  case Simulator: return "Simulator";
   }
 
   llvm_unreachable("Invalid EnvironmentType!");
@@ -311,6 +314,7 @@ Triple::ArchType Triple::getArchTypeForLLVMName(StringRef Name) {
     .Case("sparc", sparc)
     .Case("sparcel", sparcel)
     .Case("sparcv9", sparcv9)
+    .Case("love", love)
     .Case("systemz", systemz)
     .Case("tce", tce)
     .Case("tcele", tcele)
@@ -451,6 +455,7 @@ static Triple::ArchType parseArch(StringRef ArchName) {
     .Case("sparc", Triple::sparc)
     .Case("sparcel", Triple::sparcel)
     .Cases("sparcv9", "sparc64", Triple::sparcv9)
+    .Case("love", Triple::love)
     .Case("tce", Triple::tce)
     .Case("tcele", Triple::tcele)
     .Case("xcore", Triple::xcore)
@@ -572,7 +577,7 @@ static Triple::EnvironmentType parseEnvironment(StringRef EnvironmentName) {
       .StartsWith("itanium", Triple::Itanium)
       .StartsWith("cygnus", Triple::Cygnus)
       .StartsWith("coreclr", Triple::CoreCLR)
-      .StartsWith("simulator", Triple::Simulator)
+      .StartsWith("Simulator", Triple::Simulator)
       .StartsWith("macabi", Triple::MacABI)
       .Default(Triple::UnknownEnvironment);
 }
@@ -750,6 +755,7 @@ static Triple::ObjectFormatType getDefaultFormat(const Triple &T) {
   case Triple::sparc:
   case Triple::sparcel:
   case Triple::sparcv9:
+  case Triple::love:
   case Triple::spir64:
   case Triple::spir:
   case Triple::tce:
@@ -1302,6 +1308,7 @@ static unsigned getArchPointerBitWidth(llvm::Triple::ArchType Arch) {
   case llvm::Triple::shave:
   case llvm::Triple::sparc:
   case llvm::Triple::sparcel:
+  case llvm::Triple::love:
   case llvm::Triple::spir:
   case llvm::Triple::spirv32:
   case llvm::Triple::tce:
@@ -1389,6 +1396,7 @@ Triple Triple::get32BitArchVariant() const {
   case Triple::shave:
   case Triple::sparc:
   case Triple::sparcel:
+  case Triple::love:
   case Triple::spir:
   case Triple::spirv32:
   case Triple::tce:
@@ -1490,6 +1498,7 @@ Triple Triple::get64BitArchVariant() const {
   case Triple::renderscript32:  T.setArch(Triple::renderscript64);     break;
   case Triple::riscv32:         T.setArch(Triple::riscv64);    break;
   case Triple::sparc:           T.setArch(Triple::sparcv9);    break;
+  case Triple::love:            T.setArch(Triple::love);       break;
   case Triple::spir:            T.setArch(Triple::spir64);     break;
   case Triple::spirv32:         T.setArch(Triple::spirv64);    break;
   case Triple::thumb:           T.setArch(Triple::aarch64);    break;
@@ -1708,7 +1717,7 @@ VersionTuple Triple::getMinimumSupportedOSVersion() const {
     return VersionTuple(11, 0, 0);
   case Triple::IOS:
     // ARM64 slice is supported starting from Mac Catalyst 14 (macOS 11).
-    // ARM64 simulators are supported for iOS 14+.
+    // ARM64 Simulators are supported for iOS 14+.
     if (isMacCatalystEnvironment() || isSimulatorEnvironment())
       return VersionTuple(14, 0, 0);
     // ARM64e slice is supported starting from iOS 14.
@@ -1716,12 +1725,12 @@ VersionTuple Triple::getMinimumSupportedOSVersion() const {
       return VersionTuple(14, 0, 0);
     break;
   case Triple::TvOS:
-    // ARM64 simulators are supported for tvOS 14+.
+    // ARM64 Simulators are supported for tvOS 14+.
     if (isSimulatorEnvironment())
       return VersionTuple(14, 0, 0);
     break;
   case Triple::WatchOS:
-    // ARM64 simulators are supported for watchOS 7+.
+    // ARM64 Simulators are supported for watchOS 7+.
     if (isSimulatorEnvironment())
       return VersionTuple(7, 0, 0);
     break;

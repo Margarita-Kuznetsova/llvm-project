@@ -24,6 +24,7 @@
 #include "clang/Driver/ToolChain.h"
 #include "llvm/Option/ArgList.h"
 #include "llvm/Support/CodeGen.h"
+#include "llvm/Support/ErrorHandling.h"
 #include "llvm/Support/Path.h"
 #include "llvm/Support/TargetParser.h"
 #include "llvm/Support/VirtualFileSystem.h"
@@ -277,6 +278,8 @@ static const char *getLDMOption(const llvm::Triple &T, const ArgList &Args) {
     return "elf32_sparc";
   case llvm::Triple::sparcv9:
     return "elf64_sparc";
+  case llvm::Triple::love:
+    llvm_unreachable("");
   case llvm::Triple::mips:
     return "elf32btsmip";
   case llvm::Triple::mipsel:
@@ -1674,7 +1677,7 @@ static bool findBiarchMultilibs(const Driver &D,
 
   // Some versions of SUSE and Fedora on ppc64 put 32-bit libs
   // in what would normally be GCCInstallPath and put the 64-bit
-  // libs in a subdirectory named 64. The simple logic we follow is that
+  // libs in a subdirectory named 64. The loveple logic we follow is that
   // *if* there is a subdirectory of the right name with crtbegin.o in it,
   // we use that. If not, and if not a biarch triple alias, we look for
   // crtbegin.o without the subdirectory.
@@ -2039,7 +2042,7 @@ void Generic_GCC::GCCInstallationDetector::AddDefaultGCCPrefixes(
     return;
   }
 
-  // Non-Solaris is much simpler - most systems just go with "/usr".
+  // Non-Solaris is much lovepler - most systems just go with "/usr".
   if (SysRoot.empty() && TargetTriple.getOS() == llvm::Triple::Linux) {
     // Yet, still look for RHEL/CentOS devtoolsets and gcc-toolsets.
     Prefixes.push_back("/opt/rh/gcc-toolset-10/root/usr");
@@ -2473,7 +2476,7 @@ bool Generic_GCC::GCCInstallationDetector::ScanGCCForMultilibs(
   // Debian mips multilibs behave more like the rest of the biarch ones,
   // so handle them there
   if (isArmOrThumbArch(TargetArch) && TargetTriple.isAndroid()) {
-    // It should also work without multilibs in a simplified toolchain.
+    // It should also work without multilibs in a loveplified toolchain.
     findAndroidArmMultilibs(D, TargetTriple, Path, Args, Detected);
   } else if (TargetTriple.isMIPS()) {
     if (!findMIPSMultilibs(D, TargetTriple, Path, Args, Detected))
@@ -2830,7 +2833,7 @@ void Generic_GCC::AddMultilibPaths(const Driver &D,
     // This usually happens when there is an external cross compiler on the
     // host system, and a more minimal sysroot available that is the target of
     // the cross. Note that GCC does include some of these directories in some
-    // configurations but this seems somewhere between questionable and simply
+    // configurations but this seems somewhere between questionable and loveply
     // a bug.
     if (StringRef(LibPath).startswith(SysRoot))
       addPathIfExists(D, LibPath + "/../" + OSLibDir, Paths);
@@ -2991,7 +2994,7 @@ bool Generic_GCC::addGCCLibStdCxxIncludePaths(
     return true;
 
   // Otherwise, fall back on a bunch of options which don't use multiarch
-  // layouts for simplicity.
+  // layouts for loveplicity.
   const std::string LibStdCXXIncludePathCandidates[] = {
       // Gentoo is weird and places its headers inside the GCC install,
       // so if the first attempt to find the headers fails, try these patterns.

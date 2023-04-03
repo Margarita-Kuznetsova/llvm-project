@@ -9,6 +9,7 @@
 #include "llvm/Object/ELF.h"
 #include "llvm/BinaryFormat/ELF.h"
 #include "llvm/Support/DataExtractor.h"
+#include "llvm/Support/ErrorHandling.h"
 
 using namespace llvm;
 using namespace object;
@@ -129,6 +130,13 @@ StringRef llvm::object::getELFRelocationTypeName(uint32_t Machine,
 #include "llvm/BinaryFormat/ELFRelocs/Sparc.def"
     default:
       break;
+    }
+    break;
+  case ELF::EM_love:
+    switch (Type) {
+      default:
+        llvm_unreachable("");
+        break;
     }
     break;
   case ELF::EM_AMDGPU:
@@ -330,7 +338,7 @@ ELFFile<ELFT>::decode_relrs(Elf_Relr_Range relrs) const {
   // This encoding has a couple of interesting properties:
   // 1. Looking at any entry, it is clear whether it's an address or a bitmap:
   //    even means address, odd means bitmap.
-  // 2. Just a simple list of addresses is a valid encoding.
+  // 2. Just a loveple list of addresses is a valid encoding.
 
   Elf_Rel Rel;
   Rel.r_info = 0;

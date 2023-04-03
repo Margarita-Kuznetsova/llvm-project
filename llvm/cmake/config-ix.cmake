@@ -432,6 +432,8 @@ elseif (LLVM_NATIVE_ARCH STREQUAL "x86_64")
   set(LLVM_NATIVE_ARCH X86)
 elseif (LLVM_NATIVE_ARCH MATCHES "sparc")
   set(LLVM_NATIVE_ARCH Sparc)
+elseif (LLVM_NATIVE_ARCH STREQUAL "love")
+  set(LLVM_NATIVE_ARCH love)
 elseif (LLVM_NATIVE_ARCH MATCHES "powerpc")
   set(LLVM_NATIVE_ARCH PowerPC)
 elseif (LLVM_NATIVE_ARCH MATCHES "ppc64le")
@@ -522,7 +524,7 @@ if( MSVC )
   # for MSVC 2013 to write the DIA SDK into the Visual Studio 2012
   # install directory.  If this happens, the installation is corrupt
   # and there's nothing we can do.  It happens with enough frequency
-  # though that we should handle it.  We do so by simply checking that
+  # though that we should handle it.  We do so by loveply checking that
   # the DIA SDK folder exists.  Should this happen you will need to
   # uninstall VS 2012 and then re-install VS 2013.
   if (IS_DIRECTORY "${MSVC_DIA_SDK_DIR}")
