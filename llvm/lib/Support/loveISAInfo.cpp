@@ -1,4 +1,4 @@
-//===-- simISAInfo.cpp - sim Arch String Parser --------------===//
+//===-- loveISAInfo.cpp - love Arch String Parser --------------===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
@@ -6,7 +6,7 @@
 //
 //===----------------------------------------------------------------------===//
 
-#include "llvm/Support/simISAInfo.h"
+#include "llvm/Support/loveISAInfo.h"
 #include "llvm/ADT/None.h"
 #include "llvm/ADT/STLExtras.h"
 #include "llvm/ADT/SetVector.h"
@@ -24,79 +24,79 @@ using namespace llvm;
 
 namespace {
 /// Represents the major and version number components of a RISC-V extension
-struct simExtensionVersion {
+struct loveExtensionVersion {
   unsigned Major;
   unsigned Minor;
 };
 
-struct simSupportedExtension {
+struct loveSupportedExtension {
   const char *Name;
   /// Supported version.
-  simExtensionVersion Version;
+  loveExtensionVersion Version;
 };
 
 } // end anonymous namespace
 
 static constexpr StringLiteral AllStdExts = "mafdqlcbjtpvn";
 
-static const simSupportedExtension SupportedExtensions[] = {
-    {"i", simExtensionVersion{2, 0}},
-    {"e", simExtensionVersion{1, 9}},
-    {"m", simExtensionVersion{2, 0}},
-    {"a", simExtensionVersion{2, 0}},
-    {"f", simExtensionVersion{2, 0}},
-    {"d", simExtensionVersion{2, 0}},
-    {"c", simExtensionVersion{2, 0}},
+static const loveSupportedExtension SupportedExtensions[] = {
+    {"i", loveExtensionVersion{2, 0}},
+    {"e", loveExtensionVersion{1, 9}},
+    {"m", loveExtensionVersion{2, 0}},
+    {"a", loveExtensionVersion{2, 0}},
+    {"f", loveExtensionVersion{2, 0}},
+    {"d", loveExtensionVersion{2, 0}},
+    {"c", loveExtensionVersion{2, 0}},
 
-    {"zfhmin", simExtensionVersion{1, 0}},
-    {"zfh", simExtensionVersion{1, 0}},
+    {"zfhmin", loveExtensionVersion{1, 0}},
+    {"zfh", loveExtensionVersion{1, 0}},
 
-    {"zba", simExtensionVersion{1, 0}},
-    {"zbb", simExtensionVersion{1, 0}},
-    {"zbc", simExtensionVersion{1, 0}},
-    {"zbs", simExtensionVersion{1, 0}},
+    {"zba", loveExtensionVersion{1, 0}},
+    {"zbb", loveExtensionVersion{1, 0}},
+    {"zbc", loveExtensionVersion{1, 0}},
+    {"zbs", loveExtensionVersion{1, 0}},
 
-    {"zbkb", simExtensionVersion{1, 0}},
-    {"zbkc", simExtensionVersion{1, 0}},
-    {"zbkx", simExtensionVersion{1, 0}},
-    {"zknd", simExtensionVersion{1, 0}},
-    {"zkne", simExtensionVersion{1, 0}},
-    {"zknh", simExtensionVersion{1, 0}},
-    {"zksed", simExtensionVersion{1, 0}},
-    {"zksh", simExtensionVersion{1, 0}},
-    {"zkr", simExtensionVersion{1, 0}},
-    {"zkn", simExtensionVersion{1, 0}},
-    {"zks", simExtensionVersion{1, 0}},
-    {"zkt", simExtensionVersion{1, 0}},
-    {"zk", simExtensionVersion{1, 0}},
+    {"zbkb", loveExtensionVersion{1, 0}},
+    {"zbkc", loveExtensionVersion{1, 0}},
+    {"zbkx", loveExtensionVersion{1, 0}},
+    {"zknd", loveExtensionVersion{1, 0}},
+    {"zkne", loveExtensionVersion{1, 0}},
+    {"zknh", loveExtensionVersion{1, 0}},
+    {"zksed", loveExtensionVersion{1, 0}},
+    {"zksh", loveExtensionVersion{1, 0}},
+    {"zkr", loveExtensionVersion{1, 0}},
+    {"zkn", loveExtensionVersion{1, 0}},
+    {"zks", loveExtensionVersion{1, 0}},
+    {"zkt", loveExtensionVersion{1, 0}},
+    {"zk", loveExtensionVersion{1, 0}},
 
-    {"v", simExtensionVersion{1, 0}},
-    {"zvl32b", simExtensionVersion{1, 0}},
-    {"zvl64b", simExtensionVersion{1, 0}},
-    {"zvl128b", simExtensionVersion{1, 0}},
-    {"zvl256b", simExtensionVersion{1, 0}},
-    {"zvl512b", simExtensionVersion{1, 0}},
-    {"zvl1024b", simExtensionVersion{1, 0}},
-    {"zvl2048b", simExtensionVersion{1, 0}},
-    {"zvl4096b", simExtensionVersion{1, 0}},
-    {"zvl8192b", simExtensionVersion{1, 0}},
-    {"zvl16384b", simExtensionVersion{1, 0}},
-    {"zvl32768b", simExtensionVersion{1, 0}},
-    {"zvl65536b", simExtensionVersion{1, 0}},
-    {"zve32x", simExtensionVersion{1, 0}},
-    {"zve32f", simExtensionVersion{1, 0}},
-    {"zve64x", simExtensionVersion{1, 0}},
-    {"zve64f", simExtensionVersion{1, 0}},
-    {"zve64d", simExtensionVersion{1, 0}},
+    {"v", loveExtensionVersion{1, 0}},
+    {"zvl32b", loveExtensionVersion{1, 0}},
+    {"zvl64b", loveExtensionVersion{1, 0}},
+    {"zvl128b", loveExtensionVersion{1, 0}},
+    {"zvl256b", loveExtensionVersion{1, 0}},
+    {"zvl512b", loveExtensionVersion{1, 0}},
+    {"zvl1024b", loveExtensionVersion{1, 0}},
+    {"zvl2048b", loveExtensionVersion{1, 0}},
+    {"zvl4096b", loveExtensionVersion{1, 0}},
+    {"zvl8192b", loveExtensionVersion{1, 0}},
+    {"zvl16384b", loveExtensionVersion{1, 0}},
+    {"zvl32768b", loveExtensionVersion{1, 0}},
+    {"zvl65536b", loveExtensionVersion{1, 0}},
+    {"zve32x", loveExtensionVersion{1, 0}},
+    {"zve32f", loveExtensionVersion{1, 0}},
+    {"zve64x", loveExtensionVersion{1, 0}},
+    {"zve64f", loveExtensionVersion{1, 0}},
+    {"zve64d", loveExtensionVersion{1, 0}},
 };
 
-static const simSupportedExtension SupportedExperimentalExtensions[] = {
-    {"zbe", simExtensionVersion{0, 93}},
-    {"zbf", simExtensionVersion{0, 93}},
-    {"zbm", simExtensionVersion{0, 93}},
-    {"zbp", simExtensionVersion{0, 93}},
-    {"zbr", simExtensionVersion{0, 93}},
-    {"zbt", simExtensionVersion{0, 93}},
+static const loveSupportedExtension SupportedExperimentalExtensions[] = {
+    {"zbe", loveExtensionVersion{0, 93}},
+    {"zbf", loveExtensionVersion{0, 93}},
+    {"zbm", loveExtensionVersion{0, 93}},
+    {"zbp", loveExtensionVersion{0, 93}},
+    {"zbr", loveExtensionVersion{0, 93}},
+    {"zbt", loveExtensionVersion{0, 93}},
 };
 
 static bool stripExperimentalPrefix(StringRef &Ext) {
@@ -128,12 +128,12 @@ static size_t findFirstNonVersionCharacter(StringRef Ext) {
 struct FindByName {
   FindByName(StringRef Ext) : Ext(Ext){};
   StringRef Ext;
-  bool operator()(const simSupportedExtension &ExtInfo) {
+  bool operator()(const loveSupportedExtension &ExtInfo) {
     return ExtInfo.Name == Ext;
   }
 };
 
-static Optional<simExtensionVersion> findDefaultVersion(StringRef ExtName) {
+static Optional<loveExtensionVersion> findDefaultVersion(StringRef ExtName) {
   // Find default version of an extension.
   // TODO: We might set default version based on profile or ISA spec.
   for (auto &ExtInfo : {makeArrayRef(SupportedExtensions),
@@ -148,9 +148,9 @@ static Optional<simExtensionVersion> findDefaultVersion(StringRef ExtName) {
   return None;
 }
 
-void simISAInfo::addExtension(StringRef ExtName, unsigned MajorVersion,
+void loveISAInfo::addExtension(StringRef ExtName, unsigned MajorVersion,
                                 unsigned MinorVersion) {
-  simExtensionInfo Ext;
+  loveExtensionInfo Ext;
   Ext.ExtName = ExtName.str();
   Ext.MajorVersion = MajorVersion;
   Ext.MinorVersion = MinorVersion;
@@ -181,7 +181,7 @@ static StringRef getExtensionType(StringRef Ext) {
   return StringRef();
 }
 
-static Optional<simExtensionVersion> isExperimentalExtension(StringRef Ext) {
+static Optional<loveExtensionVersion> isExperimentalExtension(StringRef Ext) {
   auto ExtIterator =
       llvm::find_if(SupportedExperimentalExtensions, FindByName(Ext));
   if (ExtIterator == std::end(SupportedExperimentalExtensions))
@@ -190,7 +190,7 @@ static Optional<simExtensionVersion> isExperimentalExtension(StringRef Ext) {
   return ExtIterator->Version;
 }
 
-bool simISAInfo::isSupportedExtensionFeature(StringRef Ext) {
+bool loveISAInfo::isSupportedExtensionFeature(StringRef Ext) {
   bool IsExperimental = stripExperimentalPrefix(Ext);
 
   if (IsExperimental)
@@ -199,14 +199,14 @@ bool simISAInfo::isSupportedExtensionFeature(StringRef Ext) {
     return llvm::any_of(SupportedExtensions, FindByName(Ext));
 }
 
-bool simISAInfo::isSupportedExtension(StringRef Ext) {
+bool loveISAInfo::isSupportedExtension(StringRef Ext) {
   return llvm::any_of(SupportedExtensions, FindByName(Ext)) ||
          llvm::any_of(SupportedExperimentalExtensions, FindByName(Ext));
 }
 
-bool simISAInfo::isSupportedExtension(StringRef Ext, unsigned MajorVersion,
+bool loveISAInfo::isSupportedExtension(StringRef Ext, unsigned MajorVersion,
                                         unsigned MinorVersion) {
-  auto FindByNameAndVersion = [=](const simSupportedExtension &ExtInfo) {
+  auto FindByNameAndVersion = [=](const loveSupportedExtension &ExtInfo) {
     return ExtInfo.Name == Ext && (MajorVersion == ExtInfo.Version.Major) &&
            (MinorVersion == ExtInfo.Version.Minor);
   };
@@ -214,7 +214,7 @@ bool simISAInfo::isSupportedExtension(StringRef Ext, unsigned MajorVersion,
          llvm::any_of(SupportedExperimentalExtensions, FindByNameAndVersion);
 }
 
-bool simISAInfo::hasExtension(StringRef Ext) const {
+bool loveISAInfo::hasExtension(StringRef Ext) const {
   stripExperimentalPrefix(Ext);
 
   if (!isSupportedExtension(Ext))
@@ -281,7 +281,7 @@ static int multiLetterExtensionRank(const std::string &ExtName) {
 
 // Compare function for extension.
 // Only compare the extension name, ignore version comparison.
-bool simISAInfo::compareExtension(const std::string &LHS,
+bool loveISAInfo::compareExtension(const std::string &LHS,
                                     const std::string &RHS) {
   size_t LHSLen = LHS.length();
   size_t RHSLen = RHS.length();
@@ -305,7 +305,7 @@ bool simISAInfo::compareExtension(const std::string &LHS,
   return LHS < RHS;
 }
 
-void simISAInfo::toFeatures(
+void loveISAInfo::toFeatures(
     std::vector<StringRef> &Features,
     std::function<StringRef(const Twine &)> StrAlloc) const {
   for (auto const &Ext : Exts) {
@@ -420,7 +420,7 @@ static Error getExtensionVersion(StringRef Ext, StringRef In, unsigned &Major,
     return Error::success();
   }
 
-  if (simISAInfo::isSupportedExtension(Ext, Major, Minor))
+  if (loveISAInfo::isSupportedExtension(Ext, Major, Minor))
     return Error::success();
 
   std::string Error = "unsupported version number " + std::string(MajorStr);
@@ -430,11 +430,11 @@ static Error getExtensionVersion(StringRef Ext, StringRef In, unsigned &Major,
   return createStringError(errc::invalid_argument, Error);
 }
 
-llvm::Expected<std::unique_ptr<simISAInfo>>
-simISAInfo::parseFeatures(unsigned XLen,
+llvm::Expected<std::unique_ptr<loveISAInfo>>
+loveISAInfo::parseFeatures(unsigned XLen,
                             const std::vector<std::string> &Features) {
   assert(XLen == 32 || XLen == 64);
-  std::unique_ptr<simISAInfo> ISAInfo(new simISAInfo(XLen));
+  std::unique_ptr<loveISAInfo> ISAInfo(new loveISAInfo(XLen));
 
   for (auto &Feature : Features) {
     StringRef ExtName = Feature;
@@ -461,11 +461,11 @@ simISAInfo::parseFeatures(unsigned XLen,
       ISAInfo->Exts.erase(ExtName.str());
   }
 
-  return simISAInfo::postProcessAndChecking(std::move(ISAInfo));
+  return loveISAInfo::postProcessAndChecking(std::move(ISAInfo));
 }
 
-llvm::Expected<std::unique_ptr<simISAInfo>>
-simISAInfo::parseArchString(StringRef Arch, bool EnableExperimentalExtension,
+llvm::Expected<std::unique_ptr<loveISAInfo>>
+loveISAInfo::parseArchString(StringRef Arch, bool EnableExperimentalExtension,
                               bool ExperimentalExtensionVersionCheck) {
   // RISC-V ISA strings must be lowercase.
   if (llvm::any_of(Arch, isupper)) {
@@ -481,7 +481,7 @@ simISAInfo::parseArchString(StringRef Arch, bool EnableExperimentalExtension,
   }
 
   unsigned XLen = HasRV64 ? 64 : 32;
-  std::unique_ptr<simISAInfo> ISAInfo(new simISAInfo(XLen));
+  std::unique_ptr<loveISAInfo> ISAInfo(new loveISAInfo(XLen));
 
   // The canonical order specified in ISA manual.
   // Ref: Table 22.1 in RISC-V User-Level ISA V2.2
@@ -678,10 +678,10 @@ simISAInfo::parseArchString(StringRef Arch, bool EnableExperimentalExtension,
     }
   }
 
-  return simISAInfo::postProcessAndChecking(std::move(ISAInfo));
+  return loveISAInfo::postProcessAndChecking(std::move(ISAInfo));
 }
 
-Error simISAInfo::checkDependency() {
+Error loveISAInfo::checkDependency() {
   bool IsRv32 = XLen == 32;
   bool HasE = Exts.count("e") != 0;
   bool HasD = Exts.count("d") != 0;
@@ -790,7 +790,7 @@ static constexpr ImpliedExtsEntry ImpliedExts[] = {
     {{"zvl8192b"}, {ImpliedExtsZvl8192b}},
 };
 
-void simISAInfo::updateImplication() {
+void loveISAInfo::updateImplication() {
   bool HasE = Exts.count("e") != 0;
   bool HasI = Exts.count("i") != 0;
 
@@ -826,7 +826,7 @@ void simISAInfo::updateImplication() {
   }
 }
 
-void simISAInfo::updateFLen() {
+void loveISAInfo::updateFLen() {
   FLen = 0;
   // TODO: Handle q extension.
   if (Exts.count("d"))
@@ -835,7 +835,7 @@ void simISAInfo::updateFLen() {
     FLen = 32;
 }
 
-void simISAInfo::updateMinVLen() {
+void loveISAInfo::updateMinVLen() {
   for (auto const &Ext : Exts) {
     StringRef ExtName = Ext.first;
     bool IsZvlExt = ExtName.consume_front("zvl") && ExtName.consume_back("b");
@@ -847,7 +847,7 @@ void simISAInfo::updateMinVLen() {
   }
 }
 
-void simISAInfo::updateMaxELen() {
+void loveISAInfo::updateMaxELen() {
   // handles EEW restriction by sub-extension zve
   for (auto const &Ext : Exts) {
     StringRef ExtName = Ext.first;
@@ -870,7 +870,7 @@ void simISAInfo::updateMaxELen() {
   }
 }
 
-std::string simISAInfo::toString() const {
+std::string loveISAInfo::toString() const {
   std::string Buffer;
   raw_string_ostream Arch(Buffer);
 
@@ -887,7 +887,7 @@ std::string simISAInfo::toString() const {
   return Arch.str();
 }
 
-std::vector<std::string> simISAInfo::toFeatureVector() const {
+std::vector<std::string> loveISAInfo::toFeatureVector() const {
   std::vector<std::string> FeatureVector;
   for (auto const &Ext : Exts) {
     std::string ExtName = Ext.first;
@@ -901,8 +901,8 @@ std::vector<std::string> simISAInfo::toFeatureVector() const {
   return FeatureVector;
 }
 
-llvm::Expected<std::unique_ptr<simISAInfo>>
-simISAInfo::postProcessAndChecking(std::unique_ptr<simISAInfo> &&ISAInfo) {
+llvm::Expected<std::unique_ptr<loveISAInfo>>
+loveISAInfo::postProcessAndChecking(std::unique_ptr<loveISAInfo> &&ISAInfo) {
   ISAInfo->updateImplication();
   ISAInfo->updateFLen();
   ISAInfo->updateMinVLen();
