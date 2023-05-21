@@ -319,7 +319,7 @@ enum {
   EM_BPF = 247,           // Linux kernel bpf virtual machine
   EM_VE = 251,            // NEC SX-Aurora VE
   EM_CSKY = 252,          // C-SKY 32-bit processor
-  EM_sim = 255,          // sim arch
+  EM_love = 255,          // love arch
 };
 
 // Object file classes.
@@ -666,9 +666,9 @@ enum {
 #include "ELFRelocs/RISCV.def"
 };
 
-// ELF Relocation types for sim
+// ELF Relocation types for love
 enum {
-#include "ELFRelocs/sim.def"
+#include "ELFRelocs/love.def"
 };
 
 
@@ -991,7 +991,7 @@ enum : unsigned {
   SHT_MSP430_ATTRIBUTES = 0x70000003U,
 
   SHT_RISCV_ATTRIBUTES = 0x70000003U,
-  SHT_sim_ATTRIBUTES = 0x70000003U,
+  SHT_love_ATTRIBUTES = 0x70000003U,
 
   SHT_HIPROC = 0x7fffffff, // Highest processor arch-specific type.
   SHT_LOUSER = 0x80000000, // Lowest type reserved for applications.
